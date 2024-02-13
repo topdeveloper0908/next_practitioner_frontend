@@ -103,7 +103,6 @@ a {
   }
 }
 
-
 .main-content {
   height: calc(100vh - 6.5rem);
 }
@@ -112,7 +111,7 @@ a {
   height: 100%;
 }
 .scrollBar-hidden {
-  overflow-y: scroll; 
+  overflow-y: scroll;
 }
 
 .scrollBar-hidden::-webkit-scrollbar {
@@ -124,17 +123,17 @@ a {
 }
 /* Track */
 .scrollBar-hidden::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
 }
 
 /* Handle */
 .scrollBar-hidden::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #888;
 }
 
 /* Handle on hover */
 .scrollBar-hidden::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
 .profile-wrapper {
   cursor: pointer;
@@ -142,7 +141,7 @@ a {
 .active-profile {
   background-color: #04aa6d19;
   border-color: transparent;
-  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
   transform: scale(1);
 }
 .profile-img {
@@ -151,7 +150,7 @@ a {
   object-position: top;
 }
 .shadow {
-  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 .cursor-pointer {
   cursor: pointer;
@@ -163,7 +162,7 @@ a {
   border-radius: 50%;
 }
 .sidebar {
-  transition: all .3s;
+  transition: all 0.3s;
 }
 .w-100 {
   width: 100%;
@@ -174,7 +173,7 @@ a {
 button {
   text-transform: none !important;
 }
-@media(max-width: 767px){
+@media (max-width: 767px) {
   .header button {
     min-width: 35px;
     padding: 5px 10px;
@@ -182,7 +181,7 @@ button {
   span {
     margin: 0 !important;
   }
-  .header button .text{ 
+  .header button .text {
     display: none;
   }
   .main-content {
