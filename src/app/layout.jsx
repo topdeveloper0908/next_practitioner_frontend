@@ -17,6 +17,12 @@ const theme = createTheme({
       dark: "#558b2f",
       contrastText: "#fff",
     },
+    secondary: {
+      light: "#ff4081",
+      main: "#DD3444",
+      dark: "#DD3444",
+      contrastText: "#fff",
+    },
   },
   typography: {
     // In Chinese and Japanese the characters are usually larger,
@@ -47,22 +53,10 @@ export default function RootLayout({ children }) {
               href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
               rel="stylesheet"
             />
-            <link
-              href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
-              rel="stylesheet"
-              integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
-              crossOrigin="anonymous"
-            />
-            <link
-              rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"
-            />
           </head>
           <body className={inter.className}>
             <ToastContainer />
             {children}
-            <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
           </body>
         </html>
       </CssBaseline>

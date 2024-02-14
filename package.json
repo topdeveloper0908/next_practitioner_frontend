@@ -25,6 +25,7 @@
     "react": "^18",
     "react-anchor-link-smooth-scroll": "^1.0.12",
     "react-dom": "^18",
+    "react-icons": "^5.0.1",
     "react-map-gl": "^7.1.7",
     "react-toastify": "^10.0.4",
     "swr": "^2.2.4",
