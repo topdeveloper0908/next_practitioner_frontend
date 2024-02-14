@@ -24,6 +24,7 @@ import { Add, House, Logout } from "@mui/icons-material";
 import CustomTable from "@/components/CustomTable";
 import axios from "axios";
 import Cookies from "js-cookie";
+import Loading from "@/components/Loading";
 
 const drawerWidth = 300;
 
@@ -48,13 +49,14 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
 
 export default function Admin() {
   const theme = useTheme();
+  const [loading, setLoading] = React.useState(true);
   const [open, setOpen] = React.useState(true);
   const [data, setData] = React.useState([]);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const token = Cookies.get("token");
 
-  React.useEffect(() => {
-    axios
+  const getData = async () => {
+    await axios
       .get(`${API_URL}all`, {
         headers: {
           Authorization: `${token}`,
@@ -69,13 +71,20 @@ export default function Admin() {
           window.location.href = "/login";
         }
       });
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    getData();
   }, []);
 
   const handleDrawerOpen = () => {
     setOpen(!open);
   };
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
 

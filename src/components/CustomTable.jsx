@@ -13,9 +13,12 @@ import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Paper from "@mui/material/Paper";
 import { visuallyHidden } from "@mui/utils";
-import { Chip, IconButton, Stack } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Avatar, Button, Chip, IconButton, Stack } from "@mui/material";
+import { Delete, Edit, Star } from "@mui/icons-material";
 import { FaRegEdit } from "react-icons/fa";
+import { FaStar } from "react-icons/fa6";
+import Link from "next/link";
+import styled from "@emotion/styled";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -64,7 +67,7 @@ const headCells = [
   },
   {
     id: "Rank",
-    numeric: false,
+    numeric: true,
   },
   {
     id: "Review",
@@ -87,12 +90,13 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead>
-      <TableRow
-        sx={{
-          borderBottom: "1px solid #0077FF",
-        }}
-      >
+    <TableHead
+      sx={{
+        borderBottom: "2px solid black",
+        fontWeight: "bold",
+      }}
+    >
+      <TableRow>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -103,6 +107,7 @@ function EnhancedTableHead(props) {
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
+              sx={{ fontWeight: "bold" }}
             >
               {headCell.id}
               {orderBy === headCell.id ? (
@@ -188,110 +193,60 @@ export default function CustomTable({ data }) {
                     key={row.id}
                     sx={{ cursor: "pointer" }}
                   >
-                    {/**
-   *       function writeTable() {
-        sorter();
-        $('#dataTable').DataTable().destroy();
-        var tmp = '';
-        mainData.forEach((element) => {
-          console.log(element);
-          tmp += `<tr id="row_${element.id}">`;
-          tmp += `<td>
-                    <div class="d-flex profile-img">`
-                      if(element.upload == 0) {
-                          if (!element.imageURL || element.imageURL == ""){
-                              if(element.sex == "Male"){
-                                  tmp += ` <img src="https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34a0dbca137ef4f425e.png" width="250" height="250" style="border-radius: .3rem;">`;
-                              
-                              }
-                              else{
-                                  tmp += ` <img src="https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34ab7ea181193716085.png" width="250" height="250" style="border-radius: .3rem;">`;
-                              }
-                          }
-                          else{
-                              tmp += ` <img src="${element.imageURL}" width="250" height="250" style="border-radius: .3rem;">`;
-                          }
-                      } 
-                      else {
-                          tmp += ` <img src="${API_URL}src/${element.imageURL}" width="250" height="250" style="border-radius: .3rem;">`;
-                      }
-                      tmp +=`
-                      <div class="ml-2">
-                        <span class="mb-1 d-block font-weight-bold">${element.firstname} ${element.lastname}</span>
-                        <span class="d-block" style="margin-bottom: .4rem; line-height: .9rem;">${element.address} ${element.city} ${element.state} ${element.zipcode} ${element.country}</span>
-                        <span>${element.phone}</span>
-                        <span>${element.email}</span>
-                      </div>
-                    </div>
-                  </td>`;
-          tmp += `<td>
-                    <div class="tag-wrapper">`;
-                      element.specialty.split(',').forEach(subElement => {
-                        tmp += `<span class="tag-item">${subElement}</span>`;
-                      });
-                    tmp += `</div>
-                  </td>`;
-          tmp += `<td>
-                    <div class="tag-wrapper">`;
-                      element?.tags?.split(',').forEach(subElement => {
-                        tmp += `<span class="tag-item">${subElement}</span>`;
-                      });
-                    tmp += `</div>
-                  </td>`;
-          tmp += `<td>
-                    <div>
-                      <a href="${element.profileLink && element.profileLink != "" ? element.profileLink : "profile1.html?user_id=" + element.id}" target="_blank" class="btn btn-success d-block mb-1" style="font-size: .8rem;">Link to Profile</a>
-                      <a href="${element.meetinglink}" class="btn btn-success d-block mb-1" style="font-size: .8rem;">Link to Meeting</a>
-                    </div>
-                  </td>`;
-          tmp += `<td>
-                    <div class="star-wrapper">`;
-                      for (let index = 0; index < element.rank; index++) {
-                        tmp += `<span class="fa fa-star checked"></span>`;
-                      }
-                    tmp += `</div>
-                  </td>`;
-          tmp += `<td>
-                    <div class="star-wrapper">`;
-                      for (let index = 0; index < element.review; index++) {
-                        tmp += `<span class="fa fa-star checked"></span>`;
-                      }
-                    tmp += `</div>
-                  </td>`;
-          if(element.status == 'active') {
-            tmp += `<td>
-                      <span class="badge badge-pill badge-success">Active</span>
-                    </td>`;
-          } else {
-            tmp += `<td>
-                      <span class="badge badge-pill badge-danger">Pending</span>
-                    </td>`;
-          }
-          tmp += `<td>
-                  <div class="d-flex">
-                    <button onclick="openEditModal(${element.id})" type="button" class="btn btn-success mr-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"></path>
-                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"></path>
-                      </svg>
-                    </button>
-                    <button onclick="openDeleteModal(${element.id})" type="button" class="btn btn-danger">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
-                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </td>`;
-          tmp += `</tr>`;
-        });
-        $("#tableContent").html(tmp);
-        $('#dataTable').dataTable();
-      }
-     
-   */}
                     <TableCell align="left">
-                      <div></div>
+                      <Stack direction={"row"} spacing={2}>
+                        {row.upload == 0 ? (
+                          !row.imageURL || row.imageURL == "" ? (
+                            row.sex == "Male" ? (
+                              <Avatar
+                                src={
+                                  "https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34a0dbca137ef4f425e.png"
+                                }
+                                sx={{ width: 100, height: 100 }}
+                              />
+                            ) : (
+                              <Avatar
+                                src={
+                                  "https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34ab7ea181193716085.png"
+                                }
+                                sx={{ width: 100, height: 100 }}
+                              />
+                            )
+                          ) : (
+                            <Avatar
+                              src={row.imageURL}
+                              sx={{ width: 100, height: 100 }}
+                            />
+                          )
+                        ) : (
+                          <Avatar
+                            src={API_URL + "src/" + row.imageURL}
+                            sx={{ width: 100, height: 100 }}
+                          />
+                        )}
+                        <Stack
+                          direction="column"
+                          spacing={0.7}
+                          sx={{
+                            fontWeight: "500",
+                          }}
+                        >
+                          <span
+                            style={{
+                              marginBottom: ".4rem",
+                              lineHeight: ".5rem",
+                            }}
+                          >
+                            {row.firstname} {row.lastname}
+                          </span>
+                          <span>
+                            {row.address} {row.city} {row.state} {row.zipcode}{" "}
+                            {row.country}
+                          </span>
+                          <span>{row.phone}</span>
+                          <span>{row.email}</span>
+                        </Stack>
+                      </Stack>
                     </TableCell>
                     <TableCell align="left">
                       <div>
@@ -329,9 +284,70 @@ export default function CustomTable({ data }) {
                         ))}
                       </div>
                     </TableCell>
-                    <TableCell align="left">{row.links}</TableCell>
-                    <TableCell align="left">{row.rank}</TableCell>
-                    <TableCell align="left">{row.review}</TableCell>
+                    <TableCell align="left">
+                      <Stack direction="column" spacing={1}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="medium"
+                          sx={{
+                            fontSize: "0.7rem",
+                            fontWeight: "bold",
+                          }}
+                          onClick={() => {
+                            row.profileLink &&
+                              window.open(row.profileLink, "_blank");
+                          }}
+                        >
+                          Link to Profile
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          sx={{
+                            fontSize: "0.8rem",
+                            fontWeight: "bold",
+                          }}
+                          onClick={() => {
+                            row.meetinglink &&
+                              window.open(row.meetinglink, "_blank");
+                          }}
+                        >
+                          Link to Meeting
+                        </Button>
+                      </Stack>
+                    </TableCell>
+                    <TableCell align="left">
+                      {[...Array(row.rank)].map((_, i) => (
+                        <IconButton
+                          key={i}
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          sx={{
+                            padding: "0px",
+                          }}
+                        >
+                          <FaStar size={14} />
+                        </IconButton>
+                      ))}
+                    </TableCell>
+                    <TableCell align="left">
+                      {[...Array(row.review)].map((_, i) => (
+                        <IconButton
+                          key={i}
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          sx={{
+                            padding: "0px",
+                          }}
+                        >
+                          <FaStar size={14} />
+                        </IconButton>
+                      ))}
+                    </TableCell>
                     <TableCell align="left">
                       <Chip
                         label={row.status}
@@ -357,8 +373,11 @@ export default function CustomTable({ data }) {
                             backgroundColor: "#67bc46",
                             color: "white",
                             borderRadius: "7px",
-                            width: "40px",
-                            height: "40px",
+                            width: "35px",
+                            height: "35px",
+                            ":hover": {
+                              backgroundColor: "#348514",
+                            },
                           }}
                         >
                           <FaRegEdit size={20} />
@@ -369,8 +388,11 @@ export default function CustomTable({ data }) {
                             backgroundColor: "#DD3444",
                             color: "white",
                             borderRadius: "7px",
-                            width: "40px",
-                            height: "40px",
+                            width: "35px",
+                            height: "35px",
+                            ":hover": {
+                              backgroundColor: "#A2111F",
+                            },
                           }}
                         >
                           <Delete />
