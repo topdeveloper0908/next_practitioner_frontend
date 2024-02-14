@@ -19,6 +19,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
 import Link from "next/link";
 import styled from "@emotion/styled";
+import { API_URL } from "@/constants/constants";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -130,10 +131,12 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-export default function CustomTable({ data }) {
+export default function CustomTable({ data = [] }) {
   const [rows, setRows] = React.useState([]);
   React.useEffect(() => {
-    setRows(data);
+    // sort data by rank
+    const sortedData = data.sort((a, b) => b.rank - a.rank);
+    setRows(sortedData);
   }, [data]);
 
   const [order, setOrder] = React.useState("asc");
@@ -166,274 +169,271 @@ export default function CustomTable({ data }) {
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),
-    [order, orderBy, page, rowsPerPage, rows]
+    [order, orderBy, page, rowsPerPage, data]
   );
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={"medium"}
-          >
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={rows?.length}
-            />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                return (
-                  <TableRow
-                    hover
-                    tabIndex={-1}
-                    key={row.id}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <TableCell align="left">
-                      <Stack direction={"row"} spacing={2}>
-                        {row.upload == 0 ? (
-                          !row.imageURL || row.imageURL == "" ? (
-                            row.sex == "Male" ? (
-                              <Avatar
-                                src={
-                                  "https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34a0dbca137ef4f425e.png"
-                                }
-                                sx={{ width: 100, height: 100 }}
-                              />
-                            ) : (
-                              <Avatar
-                                src={
-                                  "https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34ab7ea181193716085.png"
-                                }
-                                sx={{ width: 100, height: 100 }}
-                              />
-                            )
+      <TableContainer>
+        <Table
+          sx={{ minWidth: 750 }}
+          aria-labelledby="tableTitle"
+          size={"medium"}
+        >
+          <EnhancedTableHead
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+            rowCount={rows?.length}
+          />
+          <TableBody>
+            {visibleRows.map((row, index) => {
+              return (
+                <TableRow
+                  hover
+                  tabIndex={-1}
+                  key={row.id}
+                  sx={{ cursor: "pointer" }}
+                >
+                  <TableCell align="left">
+                    <Stack direction={"row"} spacing={2}>
+                      {row.upload == 0 ? (
+                        !row.imageURL || row.imageURL == "" ? (
+                          row.sex == "Male" ? (
+                            <Avatar
+                              src={
+                                "https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34a0dbca137ef4f425e.png"
+                              }
+                              sx={{ width: 100, height: 100 }}
+                            />
                           ) : (
                             <Avatar
-                              src={row.imageURL}
+                              src={
+                                "https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34ab7ea181193716085.png"
+                              }
                               sx={{ width: 100, height: 100 }}
                             />
                           )
                         ) : (
                           <Avatar
-                            src={API_URL + "src/" + row.imageURL}
+                            src={row.imageURL}
                             sx={{ width: 100, height: 100 }}
                           />
-                        )}
-                        <Stack
-                          direction="column"
-                          spacing={0.7}
-                          sx={{
-                            fontWeight: "500",
-                          }}
-                        >
-                          <span
-                            style={{
-                              marginBottom: ".4rem",
-                              lineHeight: ".5rem",
-                            }}
-                          >
-                            {row.firstname} {row.lastname}
-                          </span>
-                          <span>
-                            {row.address} {row.city} {row.state} {row.zipcode}{" "}
-                            {row.country}
-                          </span>
-                          <span>{row.phone}</span>
-                          <span>{row.email}</span>
-                        </Stack>
-                      </Stack>
-                    </TableCell>
-                    <TableCell align="left">
-                      <div>
-                        {row.specialty.split(",").map((tag) => (
-                          <Chip
-                            label={tag}
-                            variant="outlined"
-                            color="primary"
-                            sx={{
-                              m: 0.2,
-                              fontSize: "0.7rem",
-                              padding: "0px",
-                              fontWeight: "600",
-                            }}
-                            size="small"
-                          />
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell align="left">
-                      <div>
-                        {row.tags.split(",").map((tag) => (
-                          <Chip
-                            label={tag}
-                            variant="outlined"
-                            color="primary"
-                            sx={{
-                              m: 0.2,
-                              fontSize: "0.7rem",
-                              padding: "0px",
-                              fontWeight: "600",
-                            }}
-                            size="small"
-                          />
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell align="left">
-                      <Stack direction="column" spacing={1}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          size="medium"
-                          sx={{
-                            fontSize: "0.7rem",
-                            fontWeight: "bold",
-                          }}
-                          onClick={() => {
-                            row.profileLink &&
-                              window.open(row.profileLink, "_blank");
-                          }}
-                        >
-                          Link to Profile
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          sx={{
-                            fontSize: "0.8rem",
-                            fontWeight: "bold",
-                          }}
-                          onClick={() => {
-                            row.meetinglink &&
-                              window.open(row.meetinglink, "_blank");
-                          }}
-                        >
-                          Link to Meeting
-                        </Button>
-                      </Stack>
-                    </TableCell>
-                    <TableCell align="left">
-                      {[...Array(row.rank)].map((_, i) => (
-                        <IconButton
-                          key={i}
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          sx={{
-                            padding: "0px",
-                          }}
-                        >
-                          <FaStar size={14} />
-                        </IconButton>
-                      ))}
-                    </TableCell>
-                    <TableCell align="left">
-                      {[...Array(row.review)].map((_, i) => (
-                        <IconButton
-                          key={i}
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          sx={{
-                            padding: "0px",
-                          }}
-                        >
-                          <FaStar size={14} />
-                        </IconButton>
-                      ))}
-                    </TableCell>
-                    <TableCell align="left">
-                      <Chip
-                        label={row.status}
-                        variant="filled"
-                        color={
-                          row.status === "active" ? "primary" : "secondary"
-                        }
+                        )
+                      ) : (
+                        <Avatar
+                          src={API_URL + "src/" + row.imageURL}
+                          sx={{ width: 100, height: 100 }}
+                        />
+                      )}
+                      <Stack
+                        direction="column"
+                        spacing={0.7}
                         sx={{
-                          m: 0.2,
-                          fontSize: "0.7rem",
-                          padding: "0px",
-                          fontWeight: "700",
-                          textTransform: "Capitalize",
+                          fontWeight: "500",
+                          fontSize: "0.9rem",
                         }}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell align="left">
-                      <Stack direction="row" spacing={2}>
-                        <IconButton
-                          variant="contained"
-                          sx={{
-                            backgroundColor: "#67bc46",
-                            color: "white",
-                            borderRadius: "7px",
-                            width: "35px",
-                            height: "35px",
-                            ":hover": {
-                              backgroundColor: "#348514",
-                            },
+                      >
+                        <span
+                          style={{
+                            marginBottom: ".4rem",
+                            lineHeight: ".5rem",
                           }}
                         >
-                          <FaRegEdit size={20} />
-                        </IconButton>
-                        <IconButton
-                          variant="contained"
-                          sx={{
-                            backgroundColor: "#DD3444",
-                            color: "white",
-                            borderRadius: "7px",
-                            width: "35px",
-                            height: "35px",
-                            ":hover": {
-                              backgroundColor: "#A2111F",
-                            },
-                          }}
-                        >
-                          <Delete />
-                        </IconButton>
+                          {row.firstname} {row.lastname}
+                        </span>
+                        <span>
+                          {row.address} {row.city} {row.state} {row.zipcode}
+                          {row.country}
+                        </span>
+                        <span>{row.phone}</span>
+                        <span>{row.email}</span>
                       </Stack>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {visibleRows.length === 0 && (
-                <TableRow>
-                  <TableCell align="center" colSpan={8}>
-                    No data
+                    </Stack>
+                  </TableCell>
+                  <TableCell align="left">
+                    <div>
+                      {row.specialty.split(",").map((tag) => (
+                        <Chip
+                          label={tag}
+                          variant="outlined"
+                          color="primary"
+                          sx={{
+                            m: 0.15,
+                            fontSize: "10px",
+                            padding: "0px",
+                            fontWeight: "600",
+                          }}
+                          size="small"
+                        />
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell align="left">
+                    <div>
+                      {row.tags.split(",").map((tag) => (
+                        <Chip
+                          label={tag}
+                          variant="outlined"
+                          color="primary"
+                          sx={{
+                            m: 0.15,
+                            fontSize: "10px",
+                            padding: "0px",
+                            fontWeight: "600",
+                          }}
+                          size="small"
+                        />
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell align="left">
+                    <Stack direction="column" spacing={1}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="medium"
+                        sx={{
+                          fontSize: "0.7rem",
+                          fontWeight: "bold",
+                        }}
+                        onClick={() => {
+                          row.profileLink &&
+                            window.open(row.profileLink, "_blank");
+                        }}
+                      >
+                        Link to Profile
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        sx={{
+                          fontSize: "0.8rem",
+                          fontWeight: "bold",
+                        }}
+                        onClick={() => {
+                          row.meetinglink &&
+                            window.open(row.meetinglink, "_blank");
+                        }}
+                      >
+                        Link to Meeting
+                      </Button>
+                    </Stack>
+                  </TableCell>
+                  <TableCell align="left">
+                    {[...Array(row.rank)].map((_, i) => (
+                      <IconButton
+                        key={i}
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        sx={{
+                          padding: "0px",
+                        }}
+                      >
+                        <FaStar size={14} />
+                      </IconButton>
+                    ))}
+                  </TableCell>
+                  <TableCell align="left">
+                    {[...Array(row.review)].map((_, i) => (
+                      <IconButton
+                        key={i}
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        sx={{
+                          padding: "0px",
+                        }}
+                      >
+                        <FaStar size={14} />
+                      </IconButton>
+                    ))}
+                  </TableCell>
+                  <TableCell align="left">
+                    <Chip
+                      label={row.status}
+                      variant="filled"
+                      color={row.status === "active" ? "primary" : "secondary"}
+                      sx={{
+                        m: 0.2,
+                        fontSize: "0.7rem",
+                        padding: "0px",
+                        fontWeight: "700",
+                        textTransform: "Capitalize",
+                      }}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell align="left">
+                    <Stack direction="row" spacing={2}>
+                      <IconButton
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "#67bc46",
+                          color: "white",
+                          borderRadius: "7px",
+                          width: "35px",
+                          height: "35px",
+                          ":hover": {
+                            backgroundColor: "#348514",
+                          },
+                        }}
+                      >
+                        <FaRegEdit size={20} />
+                      </IconButton>
+                      <IconButton
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "#DD3444",
+                          color: "white",
+                          borderRadius: "7px",
+                          width: "35px",
+                          height: "35px",
+                          ":hover": {
+                            backgroundColor: "#A2111F",
+                          },
+                        }}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </Stack>
                   </TableCell>
                 </TableRow>
-              )}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          sx={{
-            alignItems: "center",
-          }}
-          count={rows?.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+              );
+            })}
+            {visibleRows.length === 0 && (
+              <TableRow>
+                <TableCell align="center" colSpan={8}>
+                  No data
+                </TableCell>
+              </TableRow>
+            )}
+            {emptyRows > 0 && (
+              <TableRow
+                style={{
+                  height: 53 * emptyRows,
+                }}
+              >
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        sx={{
+          alignItems: "center",
+        }}
+        count={rows?.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Box>
   );
 }

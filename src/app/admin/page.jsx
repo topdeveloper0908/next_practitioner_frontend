@@ -25,6 +25,7 @@ import CustomTable from "@/components/CustomTable";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Loading from "@/components/Loading";
+import { API_URL } from "@/constants/constants";
 
 const drawerWidth = 300;
 
@@ -52,7 +53,6 @@ export default function Admin() {
   const [loading, setLoading] = React.useState(true);
   const [open, setOpen] = React.useState(true);
   const [data, setData] = React.useState([]);
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const token = Cookies.get("token");
 
   const getData = async () => {
@@ -66,7 +66,6 @@ export default function Admin() {
         setData(res.data);
       })
       .catch((err) => {
-        // if 403, redirect to login
         if (err.response.status === 403) {
           window.location.href = "/login";
         }
@@ -110,7 +109,7 @@ export default function Admin() {
         <Box
           sx={{
             mt: 3,
-            px: 5,
+            px: 3,
           }}
         >
           <Stack direction="row" justifyContent={"space-between"}>
