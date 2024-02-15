@@ -28,6 +28,7 @@ import Loading from "@/components/Loading";
 import { API_URL } from "@/constants/constants";
 import { toast } from "react-toastify";
 import EditModal from "@/components/EditModal";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 
 const drawerWidth = 300;
 
@@ -59,10 +60,18 @@ export default function Admin() {
   const [openEditModal, setOpenEditModal] = React.useState(false);
   const [editUser, setEditUser] = React.useState({});
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [deleteUser, setDeleteUser] = React.useState({});
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
 
   const handleEditModal = (user) => {
     setEditUser(user);
     setOpenEditModal(true);
+  };
+
+  const handleDeleteModal = (user) => {
+    setDeleteUser(user);
+    setOpenDeleteModal(true);
   };
 
   const handleSaveUser = async (newuser) => {
@@ -91,6 +100,35 @@ export default function Admin() {
         toast.error("Failed to update user");
       });
     setIsSubmitting(false);
+  };
+
+  const handleDeleteUser = async (userId) => {
+    setIsDeleting(true);
+    await axios
+      .post(
+        `${API_URL}remove`,
+        {
+          id: userId,
+        },
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        toast.success("User deleted successfully");
+        setOpenDeleteModal(false);
+        // set new data
+        let newData = data.filter((user) => user.id != userId);
+        setData(newData);
+        setOpenDeleteModal(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Failed to delete user");
+      });
+    setIsDeletings(false);
   };
 
   const getData = async () => {
@@ -131,6 +169,13 @@ export default function Admin() {
         setUser={setEditUser}
         isSubmitting={isSubmitting}
       />
+      <ConfirmDeleteModal
+        open={openDeleteModal}
+        handleConfirm={handleDeleteUser}
+        handleClose={() => setOpenDeleteModal(false)}
+        isDeleting={isDeleting}
+        user={deleteUser}
+      />
       <Sidebar open={open} handleDrawerClose={handleDrawerOpen} theme={theme} />
       <Main open={open}>
         <IconButton
@@ -163,7 +208,11 @@ export default function Admin() {
             </Button>
           </Stack>
           <Box sx={{ my: 2 }}>
-            <CustomTable data={data} handleEditModal={handleEditModal} />
+            <CustomTable
+              data={data}
+              handleEditModal={handleEditModal}
+              handleDeleteModal={handleDeleteModal}
+            />
           </Box>
         </Box>
       </Main>

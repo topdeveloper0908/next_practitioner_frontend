@@ -131,7 +131,11 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-export default function CustomTable({ data = [], handleEditModal }) {
+export default function CustomTable({
+  data = [],
+  handleEditModal,
+  handleDeleteModal,
+}) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("");
   const [page, setPage] = React.useState(0);
@@ -391,6 +395,7 @@ export default function CustomTable({ data = [], handleEditModal }) {
                             backgroundColor: "#A2111F",
                           },
                         }}
+                        onClick={() => handleDeleteModal(row)}
                       >
                         <Delete />
                       </IconButton>
