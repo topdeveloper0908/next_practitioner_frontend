@@ -865,7 +865,19 @@ export default function Home() {
                         );
                       })}
                       <Box position={"fixed"} bottom={"2rem"} right={"2rem"}>
-                        <AnchorLink offset="100" href="#page-top">
+                        <AnchorLink
+                          offset="100"
+                          href="#page-top"
+                          onClick={() => {
+                            document
+                              .querySelector(
+                                filter.length > 0 && "#profile-" + filter[0].id
+                              )
+                              .scrollIntoView({
+                                behavior: "smooth",
+                              });
+                          }}
+                        >
                           <Button
                             variant="contained"
                             aria-label="delete"
