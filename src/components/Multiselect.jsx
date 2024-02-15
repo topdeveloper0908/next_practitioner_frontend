@@ -59,6 +59,7 @@ function CustomMultiSelect({
       >
         <InputLabel id="mutiple-select-label">Select {type}</InputLabel>
         <Select
+          size="small"
           labelId="mutiple-select-label"
           multiple
           value={selected}
@@ -103,13 +104,12 @@ function CustomMultiSelect({
           }}
         >
           <TextField
-            margin="normal"
             fullWidth
             id={"custom-" + type}
             label={"Custom " + type}
             name={"custom-" + type}
             type="text"
-            size="medium"
+            size="small"
             onChange={(e) => setCustomText(e.target.value)}
           />
         </FormControl>
@@ -117,7 +117,6 @@ function CustomMultiSelect({
           variant="contained"
           sx={{
             width: "fit-content",
-            py: 1.8,
             margin: 0,
           }}
           onClick={() => {
