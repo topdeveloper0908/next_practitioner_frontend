@@ -26,6 +26,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Loading from "@/components/Loading";
 import { API_URL } from "@/constants/constants";
+import { toast } from "react-toastify";
+import EditModal from "@/components/EditModal";
 
 const drawerWidth = 300;
 
@@ -54,6 +56,41 @@ export default function Admin() {
   const [open, setOpen] = React.useState(true);
   const [data, setData] = React.useState([]);
   const token = Cookies.get("token");
+  const [openEditModal, setOpenEditModal] = React.useState(false);
+  const [editUser, setEditUser] = React.useState({});
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const handleEditModal = (user) => {
+    setEditUser(user);
+    setOpenEditModal(true);
+  };
+
+  const handleSaveUser = async () => {
+    setOpenEditModal(false);
+    setIsSubmitting(true);
+    await axios
+      .put(`${API_URL}update`, editUser, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      })
+      .then((res) => {
+        toast.success("User updated successfully");
+        setOpenEditModal(false);
+        // set new data
+        let newData = data.map((user) => {
+          if (user.id === editUser.id) {
+            return editUser;
+          }
+          return user;
+        });
+        setData(newData);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Failed to update user");
+      });
+  };
 
   const getData = async () => {
     await axios
@@ -85,8 +122,14 @@ export default function Admin() {
     <Loading />
   ) : (
     <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-
+      <EditModal
+        open={openEditModal}
+        handleConfirm={handleSaveUser}
+        handleClose={() => setOpenEditModal(false)}
+        user={editUser}
+        setUser={setEditUser}
+        isSubmitting={isSubmitting}
+      />
       <Sidebar open={open} handleDrawerClose={handleDrawerOpen} theme={theme} />
       <Main open={open}>
         <IconButton
@@ -119,7 +162,7 @@ export default function Admin() {
             </Button>
           </Stack>
           <Box sx={{ my: 2 }}>
-            <CustomTable data={data} />
+            <CustomTable data={data} handleEditModal={handleEditModal} />
           </Box>
         </Box>
       </Main>

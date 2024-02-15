@@ -151,6 +151,7 @@ function CustomMultiSelect({
             sx={{
               margin: 0.2,
               fontWeight: "500",
+              borderRadius: "5px",
             }}
             size="medium"
           />

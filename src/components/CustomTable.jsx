@@ -131,7 +131,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-export default function CustomTable({ data = [] }) {
+export default function CustomTable({ data = [], handleEditModal }) {
   const [rows, setRows] = React.useState([]);
   React.useEffect(() => {
     // sort data by rank
@@ -263,6 +263,7 @@ export default function CustomTable({ data = [] }) {
                             fontSize: "10px",
                             padding: "0px",
                             fontWeight: "600",
+                            borderRadius: "5px",
                           }}
                           size="small"
                         />
@@ -281,6 +282,7 @@ export default function CustomTable({ data = [] }) {
                             fontSize: "10px",
                             padding: "0px",
                             fontWeight: "600",
+                            borderRadius: "5px",
                           }}
                           size="small"
                         />
@@ -380,6 +382,7 @@ export default function CustomTable({ data = [] }) {
                             backgroundColor: "#348514",
                           },
                         }}
+                        onClick={() => handleEditModal(row)}
                       >
                         <FaRegEdit size={20} />
                       </IconButton>

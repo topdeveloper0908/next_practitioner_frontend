@@ -390,7 +390,7 @@ export default function SignUp() {
                       value={formik.values.city}
                     />
                     <TextField
-                      size="small"                    
+                      size="small"
                       margin="normal"
                       required
                       fullWidth
@@ -578,15 +578,6 @@ export default function SignUp() {
       <SelectModal
         open={selectModalOpen}
         handleClose={() => setSelectModalOpen(false)}
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          bgcolor: "white",
-          borderRadius: 1,
-          boxShadow: 24,
-        }}
         selected={
           type === SELECT_TYPES.SPECIALTY ? selectedSpecialty : selectedTags
         }
@@ -604,7 +595,7 @@ export default function SignUp() {
   );
 }
 
-function SelectModal({
+export function SelectModal({
   open,
   handleClose,
   style,
@@ -623,7 +614,18 @@ function SelectModal({
         color: "black",
       }}
     >
-      <Box sx={{ ...style, width: 450 }}>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          bgcolor: "white",
+          borderRadius: 1,
+          boxShadow: 24,
+          width: 450,
+        }}
+      >
         <h3
           id="parent-modal-title"
           style={{
