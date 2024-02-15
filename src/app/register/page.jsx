@@ -23,6 +23,8 @@ import Modal from "@mui/material/Modal";
 import Divider from "@mui/material/Divider";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import CustomMultiSelect from "@/components/Multiselect";
+import axios from "axios";
 
 export default function SignUp() {
   // const { data, error } = useSWR(
@@ -30,25 +32,44 @@ export default function SignUp() {
   //   fetcher
   // );
   const [countries, setCountries] = useState([]);
-  useEffect(() => {
-    fetch("https://trial.mobiscroll.com/content/countries.json")
-      .then((res) => res.json())
-      .then((data) => {
-        data = [...data, { value: "CA", text: "Canada", group: "C" }];
-        data.sort((a, b) => a.text.localeCompare(b.text));
-        setCountries(data);
-      });
-  }, []);
+  const SELECT_TYPES = {
+    SPECIALTY: "Specialty",
+    TAGS: "Tags",
+  };
+  const [type, setType] = useState(SELECT_TYPES.SPECIALTY);
+  const [selectedSpecialty, setSelectedSpecialty] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  const [specialtyOptions, setSpecialtyOptions] = useState([]);
+  const [tagsOptions, setTagsOptions] = useState([]);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const handleContinue = () => {
-    setStep(1);
+  useEffect(() => {
+    axios
+      .get("https://trial.mobiscroll.com/content/countries.json")
+      .then((res) => {
+        const data = res.data;
+        data.push({ value: "CA", text: "Canada", group: "C" });
+        data.sort((a, b) => a.text.localeCompare(b.text));
+        setCountries(data);
+      });
+    axios.get(`${API_URL}metadata`).then((res) => {
+      setSpecialtyOptions(res.data.specs);
+      setTagsOptions(res.data.tags);
+    });
+  }, []);
+
+  const handleSelectType = (type) => {
+    setType(type);
+    setSelectModalOpen(true);
   };
 
   const [step, setStep] = useState(0);
   const [imageType, setImageType] = useState("linkImage");
-  const [specialityModalOpen, setSpecialityModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectModalOpen, setSelectModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // yup
   const validationSchema = Yup.object().shape({
@@ -75,31 +96,58 @@ export default function SignUp() {
     email: "",
     phone: "",
     sex: "Male",
-    type: "",
     availability: "In-person",
+    uploaded: 0,
     address: "",
     city: "",
     state: "",
     zipcode: "",
     country: "US",
-    imageLink: "",
+    imageURL: "",
     specialty: "",
     tags: "",
   };
 
   const handleSubmit = async (values) => {
-    const res = await fetch(`${API_URL}/api/register`, {
-      method: "POST",
+    setIsSubmitting(true);
+    if (imageType === "customImage") {
+      const formData = new FormData();
+      formData.append("image", selectedImage);
+      let res = await axios
+        .post(`${API_URL}media`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          console.log("Error uploading file: " + err);
+        });
+      values.imageURL = res.data;
+      values.uploaded = 1;
+    }
+    const response = await axios.post(`${API_URL}new`, JSON.stringify(values), {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(values),
     });
-    if (res.status === 200) {
-      toast.success("Your application has been submitted successfully!");
-    } else {
-      toast.error("Something went wrong. Please try again later.");
+
+    const result = response.data;
+    if (result == "success") {
+      setStep(2);
+    } else if (result == "duplicated") {
+      toast.error("User already exists!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
+    setIsSubmitting(false);
   };
 
   const formik = useFormik({
@@ -107,6 +155,18 @@ export default function SignUp() {
     validationSchema,
     onSubmit: handleSubmit,
   });
+
+  useEffect(() => {
+    formik.setFieldValue("specialty", selectedSpecialty.join(", "));
+  }, [selectedSpecialty]);
+
+  useEffect(() => {
+    formik.setFieldValue("tags", selectedTags.join(", "));
+  }, [selectedTags]);
+
+  const handleImageField = (e) => {
+    setSelectedImage(e.target.files[0]);
+  };
 
   return (
     <Grid container spacing={0}>
@@ -132,6 +192,9 @@ export default function SignUp() {
             display="flex"
             justifyContent="center"
             alignItems="center"
+            sx={{
+              color: "black",
+            }}
           >
             <img
               style={{
@@ -163,298 +226,356 @@ export default function SignUp() {
           justifyContent="center"
           alignItems="center"
         >
-          <Box
-            component="form"
-            onSubmit={formik.handleSubmit}
-            sx={{ maxWidth: "30rem" }}
-            bgcolor="white"
-            className="shadow"
-            p={4}
-          >
-            {step == 0 ? (
-              <>
-                <Typography
-                  my={4}
-                  variant="h5"
-                  fontWeight="600"
-                  align="center"
-                  color={"black"}
-                >
-                  Apply to become a Gaia Healer and feature your practice!
-                </Typography>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="firstname"
-                  label="First Name"
-                  name="firstname"
-                  autoComplete="firstname"
-                  autoFocus
-                  type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.firstname}
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="lastname"
-                  label="Last Name"
-                  name="lastname"
-                  autoComplete="lastname"
-                  autoFocus
-                  type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.lastname}
-                />
-                <TextField
-                  margin="normal"
-                  size="small"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  autoFocus
-                  type="email"
-                  onChange={formik.handleChange}
-                  value={formik.values.email}
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="phone"
-                  label="Phone"
-                  name="phone"
-                  autoComplete="phone"
-                  autoFocus
-                  type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.phone}
-                />
-              </>
-            ) : (
-              <>
-                <Stack direction="row" spacing={2}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="demo-simple-select-label">Sex</InputLabel>
-                    <Select
-                      size="small"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      label="Sex"
-                      name="sex"
-                      onChange={formik.handleChange}
-                      value={formik.values.sex}
-                    >
-                      <MenuItem value="Male" selected>
-                        Male
-                      </MenuItem>
-                      <MenuItem value="Female">Female</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      label="Type"
-                      name="avauilability"
-                      onChange={formik.handleChange}
-                      value={formik.values.availability}
-                    >
-                      <MenuItem value="In-person">In-Person</MenuItem>
-                      <MenuItem value="Remote">Remote</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Stack>
-                <TextField
-                  margin="normal"
-                  required
-                  size="small"
-                  fullWidth
-                  id="address"
-                  label="Address"
-                  name="address"
-                  autoComplete="address"
-                  autoFocus
-                  type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.address}
-                />
-                <Stack direction="row" spacing={2} mt={1}>
+          {step === 2 ? (
+            <Box
+              display={"flex"}
+              alignContent={"center"}
+              flexDirection={"column"}
+              justifyContent={"center"}
+              sx={{ maxWidth: "30rem" }}
+              bgcolor="white"
+              className="shadow"
+              p={4}
+            >
+              <Typography
+                my={4}
+                variant="h5"
+                fontWeight="600"
+                align="center"
+                color={"black"}
+              >
+                Thank you for applying! <br /> We'll contact you shortly.
+              </Typography>
+            </Box>
+          ) : (
+            <Box
+              component="form"
+              onSubmit={formik.handleSubmit}
+              sx={{ maxWidth: "30rem" }}
+              bgcolor="white"
+              className="shadow"
+              p={4}
+            >
+              {step == 0 ? (
+                <>
+                  <Typography
+                    my={4}
+                    variant="h5"
+                    fontWeight="600"
+                    align="center"
+                    color={"black"}
+                  >
+                    Apply to become a Gaia Healer and feature your practice!
+                  </Typography>
                   <TextField
                     margin="normal"
                     required
                     fullWidth
-                    id="city"
-                    label="City"
-                    name="city"
-                    autoComplete="city"
+                    id="firstname"
+                    label="First Name"
+                    name="firstname"
+                    autoComplete="firstname"
                     autoFocus
                     type="text"
-                    size="small"
                     onChange={formik.handleChange}
-                    value={formik.values.city}
+                    value={formik.values.firstname}
                   />
                   <TextField
                     margin="normal"
                     required
                     fullWidth
-                    id="state"
-                    label="State"
-                    name="state"
-                    autoComplete="state"
+                    id="lastname"
+                    label="Last Name"
+                    name="lastname"
+                    autoComplete="lastname"
                     autoFocus
                     type="text"
-                    size="small"
                     onChange={formik.handleChange}
-                    value={formik.values.state}
+                    value={formik.values.lastname}
                   />
-                </Stack>
-                <Stack direction="row" spacing={2} mt={2}>
+                  <TextField
+                    margin="normal"
+                    size="small"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                    type="email"
+                    onChange={formik.handleChange}
+                    value={formik.values.email}
+                  />
                   <TextField
                     margin="normal"
                     required
                     fullWidth
-                    id="zipcode"
-                    label="Zipcode"
-                    name="zipcode"
-                    autoComplete="zipcode"
+                    id="phone"
+                    label="Phone"
+                    name="phone"
+                    autoComplete="phone"
                     autoFocus
                     type="text"
-                    size="small"
                     onChange={formik.handleChange}
-                    value={formik.values.zipcode}
+                    value={formik.values.phone}
                   />
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="demo-simple-select-label">
-                      Country
-                    </InputLabel>
-                    <Select
+                </>
+              ) : (
+                <>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth size="small">
+                      <InputLabel id="demo-simple-select-label">Sex</InputLabel>
+                      <Select
+                        size="small"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Sex"
+                        name="sex"
+                        onChange={formik.handleChange}
+                        value={formik.values.sex}
+                      >
+                        <MenuItem value="Male" selected>
+                          Male
+                        </MenuItem>
+                        <MenuItem value="Female">Female</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth size="small">
+                      <InputLabel id="demo-simple-select-label">
+                        Type
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Type"
+                        name="availability"
+                        onChange={formik.handleChange}
+                        value={formik.values.availability}
+                      >
+                        <MenuItem value="In-person">In-Person</MenuItem>
+                        <MenuItem value="Remote">Remote</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
+                  <TextField
+                    margin="normal"
+                    required
+                    size="small"
+                    fullWidth
+                    id="address"
+                    label="Address"
+                    name="address"
+                    autoComplete="address"
+                    autoFocus
+                    type="text"
+                    onChange={formik.handleChange}
+                    value={formik.values.address}
+                  />
+                  <Stack direction="row" spacing={2} mt={1}>
+                    <TextField
                       margin="normal"
                       required
                       fullWidth
-                      id="country"
-                      label="Country"
-                      name="country"
-                      autoComplete="country"
-                      placeholder="Select Country"
+                      id="city"
+                      label="City"
+                      name="city"
+                      autoComplete="city"
                       autoFocus
                       type="text"
                       size="small"
                       onChange={formik.handleChange}
-                      value={formik.values.country}
-                    >
-                      {countries.map((country) => (
-                        <MenuItem
-                          value={country.value}
-                          selected={country.value === "US"}
-                        >
-                          {country.text}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Stack>
-                <Stack my={2}>
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-row-radio-buttons-group-label"
-                    defaultValue="linkImage"
-                    name="row-radio-buttons-group"
-                    onChange={(e) => setImageType(e.target.value)}
-                  >
-                    <FormControlLabel
-                      value="linkImage"
-                      control={<Radio />}
-                      label="Use Image Link"
-                      name="imageType"
+                      value={formik.values.city}
                     />
-                    <FormControlLabel
-                      value="customImage"
-                      control={<Radio />}
-                      label="Use Custom Image"
-                      name="imageType"
-                    />
-                  </RadioGroup>
-                </Stack>
-                {imageType === "linkImage" ? (
-                  <Stack my={2}>
                     <TextField
+                      margin="normal"
                       required
-                      size="small"
                       fullWidth
-                      id="imageLink"
-                      label="Image URL"
-                      name="imageLink"
-                      autoComplete="imageLink"
+                      id="state"
+                      label="State"
+                      name="state"
+                      autoComplete="state"
                       autoFocus
                       type="text"
+                      size="small"
+                      onChange={formik.handleChange}
+                      value={formik.values.state}
                     />
                   </Stack>
-                ) : (
+                  <Stack direction="row" spacing={2} mt={2}>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="zipcode"
+                      label="Zipcode"
+                      name="zipcode"
+                      autoComplete="zipcode"
+                      autoFocus
+                      type="text"
+                      size="small"
+                      onChange={formik.handleChange}
+                      value={formik.values.zipcode}
+                    />
+                    <FormControl fullWidth size="small">
+                      <InputLabel id="demo-simple-select-label">
+                        Country
+                      </InputLabel>
+                      <Select
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="country"
+                        label="Country"
+                        name="country"
+                        autoComplete="country"
+                        placeholder="Select Country"
+                        autoFocus
+                        type="text"
+                        size="small"
+                        onChange={formik.handleChange}
+                        value={formik.values.country}
+                      >
+                        {countries.map((country) => (
+                          <MenuItem value={country.value}>
+                            {country.text}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Stack>
+                  <Stack my={2}>
+                    <RadioGroup
+                      row
+                      aria-labelledby="demo-row-radio-buttons-group-label"
+                      defaultValue="linkImage"
+                      name="row-radio-buttons-group"
+                      onChange={(e) => setImageType(e.target.value)}
+                      sx={{
+                        color: "black",
+                      }}
+                    >
+                      <FormControlLabel
+                        value="linkImage"
+                        control={<Radio />}
+                        label="Use Image Link"
+                        name="imageType"
+                        color="black"
+                      />
+                      <FormControlLabel
+                        value="customImage"
+                        control={<Radio />}
+                        label="Use Custom Image"
+                        name="imageType"
+                      />
+                    </RadioGroup>
+                  </Stack>
+                  {imageType === "linkImage" ? (
+                    <Stack my={2}>
+                      <TextField
+                        required
+                        size="small"
+                        fullWidth
+                        id="imageURL"
+                        name="imageURL"
+                        label="Image URL"
+                        autoComplete="imageLink"
+                        autoFocus
+                        type="text"
+                        onChange={formik.handleChange}
+                        value={formik.values.imageLink}
+                      />
+                    </Stack>
+                  ) : (
+                    <Stack my={2}>
+                      <TextField
+                        required
+                        size="small"
+                        fullWidth
+                        id="imageURL"
+                        name="imageURL"
+                        autoComplete="imageLink"
+                        autoFocus
+                        type="file"
+                        onChange={handleImageField}
+                      />
+                    </Stack>
+                  )}
                   <Stack my={2}>
                     <TextField
                       required
                       size="small"
                       fullWidth
-                      id="imageLink"
-                      name="imageLink"
-                      autoComplete="imageLink"
+                      id="specialty"
+                      name="specialty"
+                      label="Select Specialty"
+                      autoComplete="specialty"
                       autoFocus
-                      type="file"
+                      type="text"
+                      onClick={() => {
+                        handleSelectType(SELECT_TYPES.SPECIALTY);
+                      }}
+                      value={selectedSpecialty.join(", ")}
                     />
                   </Stack>
-                )}
-                <Stack my={2}>
-                  <TextField
-                    required
-                    size="small"
-                    fullWidth
-                    id="specialty"
-                    name="specialty"
-                    label="Select Specialty"
-                    autoComplete="specialty"
-                    autoFocus
-                    type="text"
-                    onClick={() => setSpecialityModalOpen(true)}
-                  />
-                </Stack>
-                <Stack my={2}>
-                  <TextField
-                    required
-                    size="small"
-                    fullWidth
-                    id="tags"
-                    name="tags"
-                    label="Tags"
-                    autoComplete="tags"
-                    autoFocus
-                    type="text"
-                  />
-                </Stack>
-              </>
-            )}
-            <Box display="flex" alignItems="center" justifyContent="center">
-              <Button
-                type={step === 0 ? "button" : "button"}
-                onClick={step === 0 ? handleContinue : null}
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                  <Stack my={2}>
+                    <TextField
+                      required
+                      size="small"
+                      fullWidth
+                      id="tags"
+                      name="tags"
+                      label="Tags"
+                      autoComplete="tags"
+                      autoFocus
+                      type="text"
+                      onClick={() => {
+                        handleSelectType(SELECT_TYPES.TAGS);
+                      }}
+                      value={selectedTags.join(", ")}
+                    />
+                  </Stack>
+                </>
+              )}
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                gap={2}
               >
-                {step === 0 ? "Next" : "Sign Up"}
-              </Button>
+                <Button
+                  type="button"
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  onClick={() => {
+                    setStep(step === 0 ? 1 : 0);
+                  }}
+                  disabled={
+                    formik.errors.firstname ||
+                    formik.errors.lastname ||
+                    formik.errors.email ||
+                    formik.errors.phone
+                  }
+                >
+                  {step === 0 ? "Next" : "Back"}
+                </Button>
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  disabled={!formik.isValid || isSubmitting}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </Button>
+              </Box>
             </Box>
-          </Box>
+          )}
         </Box>
       </Grid>
-      <SpecialityModal
-        open={specialityModalOpen}
-        handleClose={() => setSpecialityModalOpen(false)}
+      <SelectModal
+        open={selectModalOpen}
+        handleClose={() => setSelectModalOpen(false)}
         style={{
           position: "absolute",
           top: "50%",
@@ -464,19 +585,41 @@ export default function SignUp() {
           borderRadius: 1,
           boxShadow: 24,
         }}
-        countries={countries}
+        selected={
+          type === SELECT_TYPES.SPECIALTY ? selectedSpecialty : selectedTags
+        }
+        setSelected={
+          type === SELECT_TYPES.SPECIALTY
+            ? setSelectedSpecialty
+            : setSelectedTags
+        }
+        type={type}
+        options={
+          type === SELECT_TYPES.SPECIALTY ? specialtyOptions : tagsOptions
+        }
       />
     </Grid>
   );
 }
 
-function SpecialityModal({ open, handleClose, style, countries }) {
+function SelectModal({
+  open,
+  handleClose,
+  style,
+  selected,
+  setSelected,
+  type,
+  options,
+}) {
   return (
     <Modal
       open={open}
       onClose={handleClose}
       aria-labelledby="parent-modal-title"
       aria-describedby="parent-modal-description"
+      sx={{
+        color: "black",
+      }}
     >
       <Box sx={{ ...style, width: 450 }}>
         <h3
@@ -485,25 +628,22 @@ function SpecialityModal({ open, handleClose, style, countries }) {
             padding: "20px",
           }}
         >
-          Select Speciality
+          Select {type}
         </h3>
         <Divider component={"div"} fullWidth />
-        <select
-          class="selectpicker mb-2"
-          data-actions-box="true"
-          multiple
-          data-width="100%"
-          data-title="Select Specialty"
-        >
-          {countries.map((country) => (
-            <option value={country.value}>{country.text}</option>
-          ))}
-        </select>
+
         <Box
           style={{
             padding: "15px",
           }}
-        ></Box>
+        >
+          <CustomMultiSelect
+            selected={selected}
+            setSelected={setSelected}
+            type={type}
+            options={options}
+          />
+        </Box>
       </Box>
     </Modal>
   );
