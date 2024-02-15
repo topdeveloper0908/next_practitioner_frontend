@@ -65,11 +65,10 @@ export default function Admin() {
     setOpenEditModal(true);
   };
 
-  const handleSaveUser = async () => {
-    setOpenEditModal(false);
+  const handleSaveUser = async (newuser) => {
     setIsSubmitting(true);
     await axios
-      .put(`${API_URL}update`, editUser, {
+      .post(`${API_URL}update`, newuser, {
         headers: {
           Authorization: `${token}`,
         },
@@ -79,17 +78,19 @@ export default function Admin() {
         setOpenEditModal(false);
         // set new data
         let newData = data.map((user) => {
-          if (user.id === editUser.id) {
-            return editUser;
+          if (user.id == newuser.id) {
+            return newuser;
           }
           return user;
         });
         setData(newData);
+        setOpenEditModal(false);
       })
       .catch((err) => {
         console.log(err);
         toast.error("Failed to update user");
       });
+    setIsSubmitting(false);
   };
 
   const getData = async () => {

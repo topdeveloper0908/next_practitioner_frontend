@@ -31,7 +31,6 @@ export default function EditModal({
   user,
   setUser,
 }) {
-  console.log(user);
   const [countries, setCountries] = useState([]);
   const SELECT_TYPES = {
     SPECIALTY: "Specialty",
@@ -75,9 +74,9 @@ export default function EditModal({
     email: Yup.string().email().required("Email is required"),
     phone: Yup.string().required("Phone is required and must be a number"),
     sex: Yup.string(),
-    availability: Yup.string().required(),
-    address: Yup.string().required(),
-    city: Yup.string().required(),
+    availability: Yup.string(),
+    address: Yup.string(),
+    city: Yup.string(),
     state: Yup.string(),
     zipcode: Yup.string().required(),
     country: Yup.string().required(),
@@ -90,7 +89,7 @@ export default function EditModal({
     initialValues: user,
     validationSchema,
     onSubmit: (values) => {
-      handleConfirm(values, selectedImage);
+      handleConfirm(values);
     },
   });
 
@@ -107,10 +106,6 @@ export default function EditModal({
   useEffect(() => {
     formik.setFieldValue("tags", selectedTags.join(", "));
   }, [selectedTags]);
-
-  const handleImageField = (e) => {
-    setSelectedImage(e.target.files[0]);
-  };
 
   return (
     <Modal
@@ -189,7 +184,6 @@ export default function EditModal({
           <Stack>
             <TextField
               size="small"
-              required
               fullWidth
               id="imageURL"
               name="imageURL"
@@ -228,12 +222,14 @@ export default function EditModal({
                 width: "33%",
               }}
             >
-              <InputLabel id="demo-simple-select-label">Type</InputLabel>
+              <InputLabel id="type-select-label" size="small">
+                Type
+              </InputLabel>
               <Select
                 size="small"
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Type"
+                required
+                labelId="type-select-label"
+                id="type-select"
                 name="availability"
                 onChange={formik.handleChange}
                 value={formik.values.availability}
@@ -292,7 +288,6 @@ export default function EditModal({
           />
           <TextField
             size="small"
-            required
             id="profileLink"
             label="Profile Link"
             name="profileLink"
@@ -302,7 +297,6 @@ export default function EditModal({
           />
           <TextField
             size="small"
-            required
             id="meetinglink"
             label="Meeting Link"
             name="meetinglink"
@@ -313,7 +307,6 @@ export default function EditModal({
           <Stack direction="row" spacing={2}>
             <TextField
               size="small"
-              required
               fullWidth
               id="address"
               label="Address"
@@ -326,7 +319,6 @@ export default function EditModal({
             />
             <TextField
               size="small"
-              required
               fullWidth
               id="city"
               label="City"
@@ -353,7 +345,6 @@ export default function EditModal({
             />
             <TextField
               size="small"
-              required
               id="state"
               label="State"
               name="state"
@@ -489,23 +480,16 @@ export default function EditModal({
           justifyContent={"flex-end"}
           p={2}
         >
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => {
-              handleClose();
-            }}
-          >
+          <Button variant="contained" color="secondary" onClick={handleClose}>
             Cancel
           </Button>
           <Button
             variant="contained"
             color="primary"
-            onClick={handleConfirm}
-            disabled={!formik.isValid}
+            disabled={!formik.isValid || isSubmitting}
             type="submit"
           >
-            Save
+            {isSubmitting ? "Saving..." : "Save"}
           </Button>
         </Stack>
         <SelectModal

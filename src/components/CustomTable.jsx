@@ -132,13 +132,6 @@ EnhancedTableHead.propTypes = {
 };
 
 export default function CustomTable({ data = [], handleEditModal }) {
-  const [rows, setRows] = React.useState([]);
-  React.useEffect(() => {
-    // sort data by rank
-    const sortedData = data.sort((a, b) => b.rank - a.rank);
-    setRows(sortedData);
-  }, [data]);
-
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("");
   const [page, setPage] = React.useState(0);
@@ -161,11 +154,11 @@ export default function CustomTable({ data = [], handleEditModal }) {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(rows, getComparator(order, orderBy)).slice(
+      stableSort(data, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),
@@ -184,7 +177,7 @@ export default function CustomTable({ data = [], handleEditModal }) {
             order={order}
             orderBy={orderBy}
             onRequestSort={handleRequestSort}
-            rowCount={rows?.length}
+            rowCount={data?.length}
           />
           <TableBody>
             {visibleRows.map((row, index) => {
@@ -431,7 +424,7 @@ export default function CustomTable({ data = [], handleEditModal }) {
         sx={{
           alignItems: "center",
         }}
-        count={rows?.length}
+        count={data?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
