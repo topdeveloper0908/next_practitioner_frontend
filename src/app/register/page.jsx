@@ -21,8 +21,6 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import Modal from "@mui/material/Modal";
 import Divider from "@mui/material/Divider";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import CustomMultiSelect from "@/components/Multiselect";
 import axios from "axios";
 
@@ -295,7 +293,6 @@ export default function SignUp() {
                   />
                   <TextField
                     margin="normal"
-                    size="small"
                     required
                     fullWidth
                     id="email"
@@ -324,10 +321,9 @@ export default function SignUp() {
               ) : (
                 <>
                   <Stack direction="row" spacing={2}>
-                    <FormControl fullWidth size="small">
+                    <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-label">Sex</InputLabel>
                       <Select
-                        size="small"
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         label="Sex"
@@ -341,7 +337,7 @@ export default function SignUp() {
                         <MenuItem value="Female">Female</MenuItem>
                       </Select>
                     </FormControl>
-                    <FormControl fullWidth size="small">
+                    <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-label">
                         Type
                       </InputLabel>
@@ -361,7 +357,6 @@ export default function SignUp() {
                   <TextField
                     margin="normal"
                     required
-                    size="small"
                     fullWidth
                     id="address"
                     label="Address"
@@ -383,7 +378,6 @@ export default function SignUp() {
                       autoComplete="city"
                       autoFocus
                       type="text"
-                      size="small"
                       onChange={formik.handleChange}
                       value={formik.values.city}
                     />
@@ -397,7 +391,6 @@ export default function SignUp() {
                       autoComplete="state"
                       autoFocus
                       type="text"
-                      size="small"
                       onChange={formik.handleChange}
                       value={formik.values.state}
                     />
@@ -413,11 +406,10 @@ export default function SignUp() {
                       autoComplete="zipcode"
                       autoFocus
                       type="text"
-                      size="small"
                       onChange={formik.handleChange}
                       value={formik.values.zipcode}
                     />
-                    <FormControl fullWidth size="small">
+                    <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-label">
                         Country
                       </InputLabel>
@@ -432,7 +424,6 @@ export default function SignUp() {
                         placeholder="Select Country"
                         autoFocus
                         type="text"
-                        size="small"
                         onChange={formik.handleChange}
                         value={formik.values.country}
                       >
@@ -474,7 +465,6 @@ export default function SignUp() {
                     <Stack my={2}>
                       <TextField
                         required
-                        size="small"
                         fullWidth
                         id="imageURL"
                         name="imageURL"
@@ -490,7 +480,6 @@ export default function SignUp() {
                     <Stack my={2}>
                       <TextField
                         required
-                        size="small"
                         fullWidth
                         id="imageURL"
                         name="imageURL"
@@ -504,7 +493,6 @@ export default function SignUp() {
                   <Stack my={2}>
                     <TextField
                       required
-                      size="small"
                       fullWidth
                       id="specialty"
                       name="specialty"
@@ -521,7 +509,6 @@ export default function SignUp() {
                   <Stack my={2}>
                     <TextField
                       required
-                      size="small"
                       fullWidth
                       id="tags"
                       name="tags"
@@ -644,6 +631,23 @@ function SelectModal({
             options={options}
           />
         </Box>
+
+        <Divider component={"div"} fullWidth />
+        <Stack direction="row" spacing={1} justifyContent={"center"} py={2}>
+          <Button variant="contained" color="primary" onClick={handleClose}>
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              setSelected([]);
+              handleClose();
+            }}
+          >
+            Cancel
+          </Button>
+        </Stack>
       </Box>
     </Modal>
   );
