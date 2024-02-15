@@ -266,6 +266,7 @@ export default function SignUp() {
                     Apply to become a Gaia Healer and feature your practice!
                   </Typography>
                   <TextField
+                    size="small"
                     margin="normal"
                     required
                     fullWidth
@@ -279,6 +280,7 @@ export default function SignUp() {
                     value={formik.values.firstname}
                   />
                   <TextField
+                    size="small"
                     margin="normal"
                     required
                     fullWidth
@@ -292,6 +294,7 @@ export default function SignUp() {
                     value={formik.values.lastname}
                   />
                   <TextField
+                    size="small"
                     margin="normal"
                     required
                     fullWidth
@@ -305,6 +308,7 @@ export default function SignUp() {
                     value={formik.values.email}
                   />
                   <TextField
+                    size="small"
                     margin="normal"
                     required
                     fullWidth
@@ -324,6 +328,7 @@ export default function SignUp() {
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-label">Sex</InputLabel>
                       <Select
+                        size="small"
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         label="Sex"
@@ -342,6 +347,7 @@ export default function SignUp() {
                         Type
                       </InputLabel>
                       <Select
+                        size="small"
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         label="Type"
@@ -355,6 +361,7 @@ export default function SignUp() {
                     </FormControl>
                   </Stack>
                   <TextField
+                    size="small"
                     margin="normal"
                     required
                     fullWidth
@@ -369,6 +376,7 @@ export default function SignUp() {
                   />
                   <Stack direction="row" spacing={2} mt={1}>
                     <TextField
+                      size="small"
                       margin="normal"
                       required
                       fullWidth
@@ -382,6 +390,7 @@ export default function SignUp() {
                       value={formik.values.city}
                     />
                     <TextField
+                      size="small"                    
                       margin="normal"
                       required
                       fullWidth
@@ -397,6 +406,7 @@ export default function SignUp() {
                   </Stack>
                   <Stack direction="row" spacing={2} mt={2}>
                     <TextField
+                      size="small"
                       margin="normal"
                       required
                       fullWidth
@@ -414,6 +424,7 @@ export default function SignUp() {
                         Country
                       </InputLabel>
                       <Select
+                        size="small"
                         margin="normal"
                         required
                         fullWidth
@@ -464,6 +475,7 @@ export default function SignUp() {
                   {imageType === "linkImage" ? (
                     <Stack my={2}>
                       <TextField
+                        size="small"
                         required
                         fullWidth
                         id="imageURL"
@@ -479,6 +491,7 @@ export default function SignUp() {
                   ) : (
                     <Stack my={2}>
                       <TextField
+                        size="small"
                         required
                         fullWidth
                         id="imageURL"
@@ -492,6 +505,7 @@ export default function SignUp() {
                   )}
                   <Stack my={2}>
                     <TextField
+                      size="small"
                       required
                       fullWidth
                       id="specialty"
@@ -508,6 +522,7 @@ export default function SignUp() {
                   </Stack>
                   <Stack my={2}>
                     <TextField
+                      size="small"
                       required
                       fullWidth
                       id="tags"
