@@ -297,8 +297,10 @@ export default function CustomTable({
                           fontWeight: "bold",
                         }}
                         onClick={() => {
-                          row.profileLink &&
-                            window.open(row.profileLink, "_blank");
+                          window.open(
+                            row?.profileLink || "/profile/" + row.id,
+                            "_blank"
+                          );
                         }}
                       >
                         Link to Profile
