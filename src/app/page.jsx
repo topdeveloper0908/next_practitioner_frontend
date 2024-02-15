@@ -394,6 +394,9 @@ export default function Home() {
       filter[index].longitude != undefined
     ) {
       handleMarkerClick(filter[index].latitude, filter[index].longitude);
+      document.querySelector("#profile-" + filter[index].id).scrollIntoView({
+        behavior: "smooth",
+      });
     }
     setSelectedPractitioner(filter[index]);
   };
@@ -661,7 +664,7 @@ export default function Home() {
                             borderColor={"#eee"}
                             px={3}
                             py={3}
-                            id={element.id}
+                            id={"profile-" + element.id}
                           >
                             <Stack
                               alignItems={"center"}
