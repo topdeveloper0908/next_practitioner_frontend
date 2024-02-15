@@ -128,7 +128,7 @@ export default function Admin() {
         console.log(err);
         toast.error("Failed to delete user");
       });
-    setIsDeletings(false);
+    setIsDeleting(false);
   };
 
   const getData = async () => {
