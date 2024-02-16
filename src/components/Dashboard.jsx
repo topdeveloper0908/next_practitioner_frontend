@@ -139,7 +139,7 @@ export default function Dashboard({ isUser }) {
         },
       })
       .then((res) => {
-        toast.success("User updated successfully");
+        toast.success(isUser && "User updated successfully");
         setOpenEditModal(false);
         // set new data
         let newData = data.map((user) => {

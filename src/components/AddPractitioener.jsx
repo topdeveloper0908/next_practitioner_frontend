@@ -106,6 +106,7 @@ export default function AddPractitioner({
     review: 1,
     meetinglink: "",
     profileLink: "",
+    status: "pending",
   };
 
   const handleSubmit = async (values) => {
