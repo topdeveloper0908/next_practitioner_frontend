@@ -297,7 +297,7 @@ export default function CustomTable({
                           fontWeight: "bold",
                         }}
                         href={
-                          row.profileLink == ""
+                          !row.profileLink
                             ? `/profile/${row.id}`
                             : row.profileLink
                         }
@@ -415,15 +415,6 @@ export default function CustomTable({
                 <TableCell align="center" colSpan={8}>
                   No data
                 </TableCell>
-              </TableRow>
-            )}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={6} />
               </TableRow>
             )}
           </TableBody>

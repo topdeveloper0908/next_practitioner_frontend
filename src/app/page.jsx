@@ -24,6 +24,7 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
 import Loading from "@/components/Loading";
 import countries from "../../countries.json";
+import { Avatar } from "@mui/material";
 
 const StyledRating = styled(Rating)({
   "& .MuiRating-iconFilled": {
@@ -689,13 +690,36 @@ export default function Home() {
                               direction={{ md: "row" }}
                             >
                               <Box position={"relative"}>
-                                <img
-                                  className="profile-img"
-                                  src={element.imageURL}
-                                  co="correctValue"
-                                  width="250"
-                                  height="250"
-                                />
+                                {element.upload == 0 ? (
+                                  !element.imageURL ||
+                                  element.imageURL == "" ? (
+                                    element.sex == "Male" ? (
+                                      <Avatar
+                                        src={
+                                          "https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34a0dbca137ef4f425e.png"
+                                        }
+                                        sx={{ width: 250, height: 250 }}
+                                      />
+                                    ) : (
+                                      <Avatar
+                                        src={
+                                          "https://storage.googleapis.com/msgsndr/WkKl1K5RuZNQ60xR48k6/media/65b5b34ab7ea181193716085.png"
+                                        }
+                                        sx={{ width: 250, height: 250 }}
+                                      />
+                                    )
+                                  ) : (
+                                    <Avatar
+                                      src={element.imageURL}
+                                      sx={{ width: 250, height: 250 }}
+                                    />
+                                  )
+                                ) : (
+                                  <Avatar
+                                    src={API_URL + "src/" + element.imageURL}
+                                    sx={{ width: 250, height: 250 }}
+                                  />
+                                )}
                                 {element.rank == 3 ? (
                                   <Stack
                                     direction={"row"}
