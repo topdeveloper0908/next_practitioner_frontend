@@ -68,7 +68,7 @@ const headCells = [
   },
   {
     id: "Rank",
-    numeric: true,
+    numeric: false,
   },
   {
     id: "Review",
@@ -235,6 +235,8 @@ export default function CustomTable({
                           style={{
                             marginBottom: ".4rem",
                             lineHeight: ".5rem",
+                            fontSize: "1.2rem",
+                            fontWeight: "700",
                           }}
                         >
                           {row.firstname} {row.lastname}
@@ -256,9 +258,8 @@ export default function CustomTable({
                           variant="outlined"
                           color="primary"
                           sx={{
-                            m: 0.15,
-                            fontSize: "10px",
-                            padding: "0px",
+                            m: 0.2,
+                            fontSize: "12px",
                             fontWeight: "600",
                             borderRadius: "5px",
                           }}
@@ -275,9 +276,8 @@ export default function CustomTable({
                           variant="outlined"
                           color="primary"
                           sx={{
-                            m: 0.15,
-                            fontSize: "10px",
-                            padding: "0px",
+                            m: 0.2,
+                            fontSize: "12px",
                             fontWeight: "600",
                             borderRadius: "5px",
                           }}
@@ -296,10 +296,8 @@ export default function CustomTable({
                           fontSize: "0.7rem",
                           fontWeight: "bold",
                         }}
-                        onClick={() => {
-                          row.profileLink &&
-                            window.open(row.profileLink, "_blank");
-                        }}
+                        href={row.profileLink == '' ? `/profile/${row.id}` : row.profileLink}
+                        target="_blank"
                       >
                         Link to Profile
                       </Button>

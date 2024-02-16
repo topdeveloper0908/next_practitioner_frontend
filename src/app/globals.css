@@ -173,6 +173,9 @@ a {
 button {
   text-transform: none !important;
 }
+.hover-link:hover {
+  text-decoration: underline;
+}
 @media (max-width: 767px) {
   .header button {
     min-width: 35px;

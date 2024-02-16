@@ -1,6 +1,7 @@
 "use client"
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
+import AnchorLink from "react-anchor-link-smooth-scroll";
 import { Box, Container, Stack, Typography, Grid, Button, Rating, styled } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 
@@ -16,6 +17,7 @@ import DeblurIcon from '@mui/icons-material/Deblur';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 
 import Loading from '@/components/Loading'
+import Link from 'next/link';
 
 const StyledRating = styled(Rating)({
   '& .MuiRating-iconFilled': {
@@ -106,12 +108,16 @@ export default function Profile({ params }) {
                   <source src="../video/intro.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
-                <Button className='w-100' sx={{mt:4}} variant="contained" co="correctValue">
-                  <Stack alignItems={'center'} justifyContent={'center'} direction={'column'}>
-                    <Typography fontSize={'30px'}>Reserve Your Spot!</Typography>
-                    <Typography fontSize={'17px'} sx={{opacity: .7}}>Limited Appointments Available.</Typography>  
-                  </Stack>
-                </Button>
+                <AnchorLink
+                  href="#profile-section"
+                >
+                  <Button className='w-100' sx={{mt:4}} variant="contained" co="correctValue">
+                    <Stack alignItems={'center'} justifyContent={'center'} direction={'column'}>
+                      <Typography fontSize={'30px'}>Reserve Your Spot!</Typography>
+                      <Typography fontSize={'17px'} sx={{opacity: .7}}>Limited Appointments Available.</Typography>  
+                    </Stack>
+                  </Button>
+                </AnchorLink>
                 <Box mt={4} pt={2}>
                   <Stack direction={'row'} alignItems={'flex-start'} mt={2}>
                     <Stack alignItems={'center'} justifyContent={'center'} mr={2} borderRadius={'50%'} border={1} borderColor={'#bbb'} p={1.2}>
@@ -168,9 +174,13 @@ export default function Profile({ params }) {
             <Typography className='w-100'variant='h2' mt={5} mb={3} pt={2} fontSize='64px' align='center' color='primary.main'>The Bio-Well 3.0</Typography>
             <Typography className='w-100'variant='h2' mb={2} fontSize='64px' align='center'>Reserve Your Bioenergy Scan Today!</Typography>
             <Stack justifyContent={'center'} direction={'row'}>
-              <Button sx={{mt:4}} variant="contained" co="correctValue">
-                <Typography fontSize={'30px'}>Book An Appointment</Typography>  
-              </Button>
+              <AnchorLink
+                href="#profile-section"
+              >
+                <Button sx={{mt:4}} variant="contained" co="correctValue">
+                  <Typography fontSize={'30px'}>Book An Appointment</Typography>  
+                </Button>
+              </AnchorLink>
             </Stack>
             <Typography className='w-100' mb={5} pb={1} variant='h5' mt={4} align='center'>Get Your Hands on the Most Advanced, Latest Technology in Biophotonics <br></br> That Scientists Are Raving About...</Typography>
             <img className='w-100' style={{display: 'block'}} src="../img/BEFOREAFTER.png" />
@@ -240,9 +250,13 @@ export default function Profile({ params }) {
               </Grid>
             </Grid>
             <Stack justifyContent={'center'} direction={'row'}>
-              <Button sx={{mt:4}} variant="contained" co="correctValue">
-                <Typography fontSize={'30px'}>Let me reserve my spot before they are taken...</Typography>  
-              </Button>
+              <AnchorLink
+                href="#profile-section"
+              >
+                <Button sx={{mt:4}} variant="contained" co="correctValue">
+                  <Typography fontSize={'30px'}>Let me reserve my spot before they are taken...</Typography>  
+                </Button>
+              </AnchorLink>
             </Stack>
             <Typography className='w-100'variant='h2' my={5} fontSize='64px' align='center' color='primary.main'>Success Stories!</Typography>
             <Stack mb={5} className='w-100' direction={'row'} justifyContent={'center'}>
@@ -362,80 +376,14 @@ export default function Profile({ params }) {
             <Box bgcolor='#ead212'>
               <Typography variant='h2' textAlign='center' fontWeight={600}>ONLY $99</Typography>
             </Box>
-            <Typography my={6} variant='h2' textAlign='center'>BOOK A SESSION NOW</Typography>
-            <Grid container spacing={1} mb={8}>
-              <Grid item md={6}>
-                <Stack justifyContent='center' alignItems='center'>
-                  <img style={{display: 'block', borderRadius: '.3rem'}} src="https://biohackingcongress.com/storage/users/June2023/9Q67Ebbs5rPLWWmWGZET.png" width={300} height={300}/>
-                  <Typography variant='h4' mt={2} mb={1}>{data?.firstname + ' ' + data?.lastname}</Typography>
-                  <StyledRating 
-                    co="correctValue"
-                    color='primary.main'
-                    name="size-medium" 
-                    defaultValue={data?.review} 
-                    readOnly  
-                    emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                  />
-                  <Button sx={{mt:2}} variant="contained" co="correctValue">
-                    <Typography fontSize={'30px'}>Reserve Your Biofield Scan</Typography>  
-                  </Button>
-                </Stack>
-              </Grid>
-              <Grid item md={6}>
-                <Box p={6} border={1} borderColor='#ddd' borderRadius='.3rem'>
-                  <Typography variant='h4' textAlign='center' mb={3}>Practitioner Information</Typography>  
-                  <Stack direction='row' alignItems='center' mb={1}>
-                    <Typography variant='h6' width='10rem'>Name</Typography>  
-                    <Typography variant='h6'>{data?.firstname + ' ' + data?.lastname}</Typography>  
-                  </Stack>
-                  <Stack direction='row' alignItems='center' mb={1}>
-                    <Typography variant='h6' width='10rem'>Address</Typography>  
-                    <Typography flex={1} variant='h6'>{((data?.hide == 1 || data?.availability == 'Remote') ? '': data?.address) + ' ' + data?.city  + ' ' + data?.state + ' ' + data?.zipcode + ' ' + data?.country}</Typography>  
-                  </Stack>
-                  {
-                    (data?.hide == 1 || data?.availability == 'Remote') ? <></> :
-                      <Stack direction='row' alignItems='center' mb={1}>
-                        <Typography variant='h6' width='10rem'>Email</Typography>  
-                        <Typography variant='h6'>{data?.email}</Typography>  
-                      </Stack>
-                  }
-                  {
-                    (data?.hide == 1 || data?.availability == 'Remote') ? <></> :
-                      <Stack direction='row' alignItems='center' mb={1}>
-                        <Typography variant='h6' width='10rem'>Phone</Typography>  
-                        <Typography variant='h6'>{data?.phone}</Typography>  
-                      </Stack>
-                  }
-                  <Stack direction='row' mb={1}>
-                    <Typography variant='h6' width='10rem'>Speciality</Typography>  
-                    <Stack flex={1} flexWrap='wrap' alignItems={'center'} co="correctValue" direction={'row'}>
-                      {
-                        data?.specialty.map((item, index)=>{
-                          return(
-                            <Box className="cursor-pointer" key={index} color="primary.main" border={1} co="correctValue" borderColor="primary.main" borderRadius={1} px={.7} py={.3} m={.2}>
-                              <Typography fontSize=".9rem" co="correctValue">{item}</Typography>
-                            </Box>
-                          )
-                        })
-                      }
-                    </Stack>
-                  </Stack>
-                  <Stack direction='row' mb={1}>
-                    <Typography variant='h6' width='10rem'>Tags</Typography>  
-                    <Stack flex={1} flexWrap='wrap' alignItems={'center'} co="correctValue" direction={'row'}>
-                      {
-                        data?.tags.map((item, index)=>{
-                          return(
-                            <Box key={index} className="cursor-pointer" color="primary.main" border={1} co="correctValue" borderColor="primary.main" borderRadius={1} px={.7} py={.3} m={.2}>
-                              <Typography fontSize=".9rem" co="correctValue">{item}</Typography>
-                            </Box>
-                          )
-                        })
-                      }
-                    </Stack>
-                  </Stack>
-                  <Stack direction='row' alignItems='center' mb={1}>
-                    <Typography variant='h6' width='10rem'>Reviews</Typography>  
+            <div id='profile-section'>
+              <Typography my={6} variant='h2' textAlign='center'>BOOK A SESSION NOW</Typography>
+            </div>
+              <Grid container spacing={1} mb={8}>
+                <Grid item md={6}>
+                  <Stack justifyContent='center' alignItems='center'>
+                    <img style={{display: 'block', borderRadius: '.3rem'}} src={data.imageURL} width={300} height={300}/>
+                    <Typography variant='h4' mt={2} mb={1}>{data?.firstname + ' ' + data?.lastname}</Typography>
                     <StyledRating 
                       co="correctValue"
                       color='primary.main'
@@ -444,24 +392,92 @@ export default function Profile({ params }) {
                       readOnly  
                       emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
                     />
+                    <Button href={data.meetinglink} sx={{mt:2}} variant="contained" co="correctValue">
+                      <Typography fontSize={'30px'}>Reserve Your Biofield Scan</Typography>  
+                    </Button>
                   </Stack>
-                  <Stack direction='row' alignItems='center' mb={1}>
-                    <Typography variant='h6' width='10rem'>Type</Typography>  
-                    <Typography variant='h6'>{data?.availability == 'Remote' ? 'Remote' : 'In-Person'}</Typography>  
-                  </Stack>
-                </Box>
+                </Grid>
+                <Grid item md={6}>
+                  <Box p={6} border={1} borderColor='#ddd' borderRadius='.3rem'>
+                    <Typography variant='h4' textAlign='center' mb={3}>Practitioner Information</Typography>  
+                    <Stack direction='row' alignItems='center' mb={1}>
+                      <Typography variant='h6' width='10rem'>Name</Typography>  
+                      <Typography variant='h6'>{data?.firstname + ' ' + data?.lastname}</Typography>  
+                    </Stack>
+                    <Stack direction='row' alignItems='center' mb={1}>
+                      <Typography variant='h6' width='10rem'>Address</Typography>  
+                      <Typography flex={1} variant='h6'>{((data?.hide == 1 || data?.availability == 'Remote') ? '': data?.address) + ' ' + data?.city  + ' ' + data?.state + ' ' + data?.zipcode + ' ' + data?.country}</Typography>  
+                    </Stack>
+                    {
+                      (data?.hide == 1 || data?.availability == 'Remote') ? <></> :
+                        <Stack direction='row' alignItems='center' mb={1}>
+                          <Typography variant='h6' width='10rem'>Email</Typography>  
+                          <Typography variant='h6'>{data?.email}</Typography>  
+                        </Stack>
+                    }
+                    {
+                      (data?.hide == 1 || data?.availability == 'Remote') ? <></> :
+                        <Stack direction='row' alignItems='center' mb={1}>
+                          <Typography variant='h6' width='10rem'>Phone</Typography>  
+                          <Typography variant='h6'>{data?.phone}</Typography>  
+                        </Stack>
+                    }
+                    <Stack direction='row' mb={1}>
+                      <Typography variant='h6' width='10rem'>Speciality</Typography>  
+                      <Stack flex={1} flexWrap='wrap' alignItems={'center'} co="correctValue" direction={'row'}>
+                        {
+                          data?.specialty.map((item, index)=>{
+                            return(
+                              <Box className="cursor-pointer" key={index} color="primary.main" border={1} co="correctValue" borderColor="primary.main" borderRadius={1} px={.7} py={.3} m={.2}>
+                                <Typography fontSize=".9rem" co="correctValue">{item}</Typography>
+                              </Box>
+                            )
+                          })
+                        }
+                      </Stack>
+                    </Stack>
+                    <Stack direction='row' mb={1}>
+                      <Typography variant='h6' width='10rem'>Tags</Typography>  
+                      <Stack flex={1} flexWrap='wrap' alignItems={'center'} co="correctValue" direction={'row'}>
+                        {
+                          data?.tags.map((item, index)=>{
+                            return(
+                              <Box key={index} className="cursor-pointer" color="primary.main" border={1} co="correctValue" borderColor="primary.main" borderRadius={1} px={.7} py={.3} m={.2}>
+                                <Typography fontSize=".9rem" co="correctValue">{item}</Typography>
+                              </Box>
+                            )
+                          })
+                        }
+                      </Stack>
+                    </Stack>
+                    <Stack direction='row' alignItems='center' mb={1}>
+                      <Typography variant='h6' width='10rem'>Reviews</Typography>  
+                      <StyledRating 
+                        co="correctValue"
+                        color='primary.main'
+                        name="size-medium" 
+                        defaultValue={data?.review} 
+                        readOnly  
+                        emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
+                      />
+                    </Stack>
+                    <Stack direction='row' alignItems='center' mb={1}>
+                      <Typography variant='h6' width='10rem'>Type</Typography>  
+                      <Typography variant='h6'>{data?.availability == 'Remote' ? 'Remote' : 'In-Person'}</Typography>  
+                    </Stack>
+                  </Box>
+                </Grid>
               </Grid>
-            </Grid>
             <img className='w-100' style={{display: 'block'}} src="../img/cc.jpg"/>
             <Typography align='center' mt={8}>Consumer Testimonials. As with any business-related program, your results using the Bio-Well may vary from these consumer testimonials. Bio-Well is not a medical instrument, it is not designed for medical diagnostics, it measures energy and stress of a person. In case of health concerns, please, consult your doctor.</Typography>
             <Stack flexWrap='wrap' direction='row' alignItems='center' justifyContent='center' my={4}>
-              <Typography align='center' whiteSpace='nowrap'>Gaia Healers</Typography>
+              <Link className='hover-link' href=''><Typography align='center' whiteSpace='nowrap'>Gaia Healers</Typography></Link>
               <Box mx={2} width='1px' height={16} bgcolor='#777'></Box>
-              <Typography align='center' whiteSpace='nowrap'>Terms of Use</Typography>
+              <Link className='hover-link' href=''><Typography align='center' whiteSpace='nowrap'>Terms of Use</Typography></Link>
               <Box mx={2} width='1px' height={16} bgcolor='#777'></Box>
-              <Typography align='center' whiteSpace='nowrap'>Privacy Policy</Typography>
+              <Link className='hover-link' href=''><Typography align='center' whiteSpace='nowrap'>Privacy Policy</Typography></Link>
               <Box mx={2} width='1px' height={16} bgcolor='#777'></Box>
-              <Typography align='center' whiteSpace='nowrap'>Support</Typography>
+              <Link className='hover-link' href=''><Typography align='center' whiteSpace='nowrap'>Support</Typography></Link>
             </Stack>
           </Container>
         </Box>:<Loading />
