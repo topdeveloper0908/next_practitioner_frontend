@@ -29,6 +29,7 @@ import { API_URL } from "@/constants/constants";
 import { toast } from "react-toastify";
 import EditModal from "@/components/EditModal";
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
+import * as XLSX from "xlsx";
 
 const drawerWidth = 300;
 
@@ -73,6 +74,58 @@ export default function Admin() {
     setDeleteUser(user);
     setOpenDeleteModal(true);
   };
+
+  function uploadedDB(e) {
+    var file = e.target.files[0];
+    var reader = new FileReader();
+    var excelCheck = true;
+    var excelTemplate = [
+      "First Name",
+      "Last Name",
+      "Email",
+      "Phone",
+      "Address",
+      "City",
+      "State",
+      "Zipcode",
+      "Country",
+      "ImageURL",
+      "Specialty",
+      "Tags",
+      "MeetingLink",
+      "Sex",
+    ];
+    reader.onload = async function (e) {
+      var data = new Uint8Array(e.target.result);
+      var workbook = XLSX.read(data, { type: "array" });
+      var sheetName = workbook.SheetNames[0];
+      var sheet = workbook.Sheets[sheetName];
+      var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      excelTemplate.forEach((element, index) => {
+        if (element != jsonData[0][index]) {
+          excelCheck = false;
+        }
+      });
+      if (excelCheck == false) {
+        toast.error("Invalid Excel Template");
+        return;
+      } else {
+        var objectData = jsonData.map((row) => {
+          var obj = {};
+          jsonData[0].forEach((key, i) => (obj[key] = row[i]));
+          return obj;
+        });
+
+        const response = await axios.post(`${API_URL}updateDB`, objectData);
+        const result = response.data;
+        if (result == "success") {
+          toast.success("Data uploaded successfully");
+          getData();
+        }
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
 
   const handleSaveUser = async (newuser) => {
     setIsSubmitting(true);
@@ -142,9 +195,10 @@ export default function Admin() {
         setData(res.data);
       })
       .catch((err) => {
-        if (err.response.status === 403) {
+        if (err?.response?.status === 403) {
           window.location.href = "/login";
         }
+        console.log(err);
       });
     setLoading(false);
   };
@@ -203,7 +257,23 @@ export default function Admin() {
         >
           <Stack direction="row" justifyContent={"space-between"}>
             <h3>Practitioner List</h3>
-            <Button variant="contained" color="primary">
+            <input
+              style={{
+                display: "none",
+              }}
+              onChange={uploadedDB}
+              type="file"
+              id="dbUpload"
+              accept=".xlsx, .xls, .csv"
+            />
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                document.getElementById("dbUpload").click();
+              }}
+            >
               Upload Excel
             </Button>
           </Stack>
@@ -220,17 +290,17 @@ export default function Admin() {
   );
 }
 
-const Sidebar = ({ open, handleDrawerClose, theme }) => {
+const Sidebar = ({ open, handleDrawerClose, theme, setPage }) => {
   const buttons = [
     {
       name: "Home",
       icon: House,
-      onClick: () => {},
+      onClick: () => setPage("home"),
     },
     {
       name: "Add Practitioner",
       icon: Add,
-      onClick: () => {},
+      onClick: () => setPage("add"),
     },
     {
       name: "Sign out",

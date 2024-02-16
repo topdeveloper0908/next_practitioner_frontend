@@ -296,7 +296,11 @@ export default function CustomTable({
                           fontSize: "0.7rem",
                           fontWeight: "bold",
                         }}
-                        href={row.profileLink == '' ? `/profile/${row.id}` : row.profileLink}
+                        href={
+                          row.profileLink == ""
+                            ? `/profile/${row.id}`
+                            : row.profileLink
+                        }
                         target="_blank"
                       >
                         Link to Profile
@@ -319,34 +323,38 @@ export default function CustomTable({
                     </Stack>
                   </TableCell>
                   <TableCell align="left">
-                    {[...Array(row.rank)].map((_, i) => (
-                      <IconButton
-                        key={i}
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        sx={{
-                          padding: "0px",
-                        }}
-                      >
-                        <FaStar size={14} />
-                      </IconButton>
-                    ))}
+                    {row.rank
+                      ? [...Array(Number(row.rank))].map((_, i) => (
+                          <IconButton
+                            key={i}
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            sx={{
+                              padding: "0px",
+                            }}
+                          >
+                            <FaStar size={14} />
+                          </IconButton>
+                        ))
+                      : ""}
                   </TableCell>
                   <TableCell align="left">
-                    {[...Array(row.review)].map((_, i) => (
-                      <IconButton
-                        key={i}
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        sx={{
-                          padding: "0px",
-                        }}
-                      >
-                        <FaStar size={14} />
-                      </IconButton>
-                    ))}
+                    {row.review
+                      ? [...Array(Number(row.review))].map((_, i) => (
+                          <IconButton
+                            key={i}
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            sx={{
+                              padding: "0px",
+                            }}
+                          >
+                            <FaStar size={14} />
+                          </IconButton>
+                        ))
+                      : ""}
                   </TableCell>
                   <TableCell align="left">
                     <Chip

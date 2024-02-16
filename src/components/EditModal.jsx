@@ -68,35 +68,24 @@ export default function EditModal({
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectModalOpen, setSelectModalOpen] = useState(false);
 
-  const validationSchema = Yup.object().shape({
-    firstname: Yup.string().required("First Name is required"),
-    lastname: Yup.string().required("Last Name is required"),
-    email: Yup.string().email().required("Email is required"),
-    phone: Yup.string().required("Phone is required and must be a number"),
-    sex: Yup.string(),
-    availability: Yup.string(),
-    address: Yup.string(),
-    city: Yup.string(),
-    state: Yup.string(),
-    zipcode: Yup.string().required(),
-    country: Yup.string().required(),
-    imageURL: Yup.string(),
-    specialty: Yup.string().required(),
-    tags: Yup.string().required(),
-  });
-
   const formik = useFormik({
     initialValues: user,
-    validationSchema,
     onSubmit: (values) => {
       handleConfirm(values);
     },
   });
 
   useEffect(() => {
+    console.log({ user });
     formik.setValues(user);
     setSelectedSpecialty(user?.specialty?.split(", ") || []);
     setSelectedTags(user?.tags?.split(", ") || []);
+    if (user?.country?.length > 2) {
+      formik.setFieldValue(
+        "country",
+        countries.find((c) => c.text === user.country).value
+      );
+    }
   }, [user]);
 
   useEffect(() => {
@@ -155,7 +144,6 @@ export default function EditModal({
             <TextField
               size="small"
               margin="normal"
-              required
               fullWidth
               id="firstname"
               label="First Name"
@@ -169,7 +157,6 @@ export default function EditModal({
             <TextField
               size="small"
               margin="normal"
-              required
               fullWidth
               id="lastname"
               label="Last Name"
@@ -227,7 +214,6 @@ export default function EditModal({
               </InputLabel>
               <Select
                 size="small"
-                required
                 labelId="type-select-label"
                 id="type-select"
                 name="availability"
@@ -260,7 +246,6 @@ export default function EditModal({
           </Stack>
           <TextField
             size="small"
-            required
             fullWidth
             id="specialty"
             name="specialty"
@@ -274,7 +259,6 @@ export default function EditModal({
           />
           <TextField
             size="small"
-            required
             fullWidth
             id="tags"
             name="tags"
@@ -333,7 +317,6 @@ export default function EditModal({
           <Stack direction="row" spacing={2}>
             <TextField
               size="small"
-              required
               id="zipcode"
               label="Zipcode"
               name="zipcode"
@@ -365,7 +348,6 @@ export default function EditModal({
               <Select
                 size="small"
                 margin="normal"
-                required
                 id="country"
                 label="Country"
                 name="country"
@@ -383,7 +365,6 @@ export default function EditModal({
             </FormControl>
             <TextField
               size="small"
-              required
               id="email"
               label="Email"
               name="email"
@@ -397,7 +378,6 @@ export default function EditModal({
           <Stack direction="row" spacing={2}>
             <TextField
               size="small"
-              required
               id="phone"
               label="Phone"
               name="phone"
@@ -433,7 +413,9 @@ export default function EditModal({
                 width: "48%",
               }}
             >
-              <InputLabel id="rank-select-label">Rank</InputLabel>
+              <InputLabel id="rank-select-label" size="small">
+                Rank
+              </InputLabel>
               <Select
                 size="small"
                 labelId="rank-select-label"
@@ -453,7 +435,9 @@ export default function EditModal({
                 width: "48%",
               }}
             >
-              <InputLabel id="review-select-label">Review</InputLabel>
+              <InputLabel id="review-select-label" size="small">
+                Review
+              </InputLabel>
               <Select
                 size="small"
                 labelId="review-select-label"

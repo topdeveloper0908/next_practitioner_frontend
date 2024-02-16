@@ -414,6 +414,14 @@ export default function Home() {
     filterUser();
   }, [filterSpecs, filterTags, zipcode, mile, practitionerType]);
 
+  const clearFilter = () => {
+    setFilterSpecs([]);
+    setFilterTags([]);
+    setZipcode("");
+    setMile(0);
+    setPractitionerType("All");
+  };
+
   return (
     <main>
       {loading == false ? (
@@ -483,7 +491,12 @@ export default function Home() {
               padding={"1.5rem"}
               left={".5rem"}
             >
-              <Button fullWidth={true} variant="contained" color="error">
+              <Button
+                fullWidth={true}
+                variant="contained"
+                color="error"
+                onClick={clearFilter}
+              >
                 Clear Filter
               </Button>
               <TextField
@@ -494,6 +507,7 @@ export default function Home() {
                 id="outlined-basic"
                 label="Zipcode"
                 variant="outlined"
+                value={zipcode}
               />
               <TextField
                 sx={{ mt: 3 }}
@@ -504,6 +518,7 @@ export default function Home() {
                 size="small"
                 onChange={(e) => setMile(Number(e.target.value))}
                 fullWidth={true}
+                value={mile}
               >
                 {miles.map((option, index) => (
                   <MenuItem key={index} value={option.value}>
@@ -520,6 +535,7 @@ export default function Home() {
                 size="small"
                 onChange={(e) => setPractitionerType(e.target.value)}
                 fullWidth={true}
+                value={practitionerType}
               >
                 {types.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -848,6 +864,10 @@ export default function Home() {
                                     href={element.meetinglink}
                                     variant="contained"
                                     co="correctValue"
+                                    onClick={(e) => {
+                                      // stop propagation to prevent the page from scrolling to the top
+                                      e.stopPropagation();
+                                    }}
                                   >
                                     Schedule a Meeting
                                   </Button>
@@ -855,6 +875,10 @@ export default function Home() {
                                     href={`/profile/${element.id}`}
                                     variant="outlined"
                                     co="correctValue"
+                                    onClick={(e) => {
+                                      // stop propagation to prevent the page from scrolling to the top
+                                      e.stopPropagation();
+                                    }}
                                   >
                                     View Profile
                                   </Button>

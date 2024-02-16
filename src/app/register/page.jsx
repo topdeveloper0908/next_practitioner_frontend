@@ -167,7 +167,7 @@ export default function SignUp() {
   };
 
   return (
-    <Grid container spacing={0}>
+    <Grid container spacing={0} justifyContent={"center"}>
       <Grid item md={6}>
         <Box
           height="100vh"
@@ -175,13 +175,25 @@ export default function SignUp() {
           flexDirection="column"
           justifyContent="center"
           alignItems="center"
+          sx={{ padding: 4 }}
         >
           <Box display="flex" justifyContent="center" alignItems="center">
             <img src="../img/logo-1.png" alt="logo" width="300" />
           </Box>
-          <Box mt={4}>
+          <Box
+            mt={4}
+            sx={{
+              width: "70%",
+              minWidth: "300px",
+            }}
+          >
             <iframe
-              style={{ width: "500px", height: "281px", borderRadius: ".3rem" }}
+              style={{
+                // width: "500px",
+                height: "281px",
+                width: "100%",
+                borderRadius: ".3rem",
+              }}
               src="https://player.vimeo.com/video/67733848?title=0&amp;byline=0&amp;portrait=0&amp;color=44b4ad"
             ></iframe>
           </Box>
@@ -190,6 +202,7 @@ export default function SignUp() {
             display="flex"
             justifyContent="center"
             alignItems="center"
+            flexWrap={"wrap"}
             sx={{
               color: "black",
             }}
@@ -234,6 +247,8 @@ export default function SignUp() {
               bgcolor="white"
               className="shadow"
               p={4}
+              height={"536px"}
+              width={"30rem"}
             >
               <Typography
                 my={4}
@@ -392,7 +407,6 @@ export default function SignUp() {
                     <TextField
                       size="small"
                       margin="normal"
-                      required
                       fullWidth
                       id="state"
                       label="State"
@@ -463,12 +477,14 @@ export default function SignUp() {
                         label="Use Image Link"
                         name="imageType"
                         color="black"
+                        checked={imageType === "linkImage"}
                       />
                       <FormControlLabel
                         value="customImage"
                         control={<Radio />}
                         label="Use Custom Image"
                         name="imageType"
+                        checked={imageType === "customImage"}
                       />
                     </RadioGroup>
                   </Stack>
